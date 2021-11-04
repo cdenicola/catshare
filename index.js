@@ -1,8 +1,14 @@
 const { response } = require('express')
 const { exec } = require("child_process");
+var morgan = require('morgan')
+
 const express = require('express')
 const app = express()
 app.use(express.static('public'))
+
+// Logging
+app.use(morgan('combined'))
+
 // Front Page
 app.get('/', (req,res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
