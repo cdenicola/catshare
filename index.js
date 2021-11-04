@@ -2,6 +2,11 @@ const { response } = require('express')
 const { exec } = require("child_process");
 const express = require('express')
 const app = express()
+app.use(express.static('public'))
+// Front Page
+app.get('/', (req,res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+})
 
 // IDOR ENDPOINT
 let people = {
