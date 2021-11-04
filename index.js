@@ -63,16 +63,16 @@ app.get('/xss', (req,res) => {
 function rce(file, res) {
   exec("cat allowed/" + file, (error, stdout, stderr) => {
     if (error) {
-        console.log(`error: ${error.message}`);
+        // console.log(`error: ${error.message}`);
         res.send(error)
         return;
     }
     if (stderr) {
-        console.log(`stderr: ${stderr}`);
+        // console.log(`stderr: ${stderr}`);
         res.send(stderr)
         return;
     }
-    console.log(`stdout: ${stdout}`);
+    // console.log(`stdout: ${stdout}`);
     res.send(stdout)
   });
 }
