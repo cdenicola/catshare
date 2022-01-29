@@ -2,7 +2,7 @@
 const sendUserIdCookie = (userId, res) => {
     // Our token expires after one day
     const oneDayToSeconds = 24 * 60 * 60;
-    res.cookie('userId', btoa(userId),  
+    res.cookie('userId', Buffer.from(userId).toString('base64'),  
     { maxAge: oneDayToSeconds,
     // // You can't access these tokens in the client's javascript
     //   httpOnly: true,
@@ -34,7 +34,8 @@ const getAppCookies = (req) => {
 // Returns the value of the userId cookie
 const getUserId = (req, res) =>  {
     try {
-        return atob(getAppCookies(req, res)['userId']);
+        base64d = Buffer.from(getAppCookies(req, res)['userId'], 'base64').toString();
+        return base64d
     }
     catch {
         return undefined;
