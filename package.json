@@ -1,0 +1,25 @@
+{
+  "name": "cs106s_vulnerable_site",
+  "version": "1.1.1",
+  "description": "Vulnerable website made for CS106S lesson. Includes XSS, IDOR, Auth controls, and RCE",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cdenicola/CS106S-VulnerabilityExample.git"
+  },
+  "author": "Cooper de Nicola",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cdenicola/CS106S-VulnerabilityExample/issues"
+  },
+  "homepage": "https://github.com/cdenicola/CS106S-VulnerabilityExample#readme"
+}
