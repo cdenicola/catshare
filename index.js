@@ -1,12 +1,12 @@
 const { response } = require('express')
 const { exec } = require("child_process");
 var morgan = require('morgan')
-
 const express = require('express')
+
 const app = express()
 app.use(express.static('public'))
-
 // Logging
+
 app.use(morgan('combined'))
 
 // handle posts
@@ -22,18 +22,11 @@ app.get('/', (req,res) => {
 })
 
 // IDOR ENDPOINT
-// let people = {
-//   "test": {"age": 0, "location": "Unknown", birthday: "1/1", "ssn": "REDACTED"},
-//   "miles": {"age": 20, "location": "Stanford, CA", birthday: "1/31", "ssn": "###-##-####"},
-//   "matthew": {"age": 21, "location": "Stanford, CA", birthday: "11/12", "ssn": "###-##-####"},
-//   "cooper": {"age": 21, "location": "Stanford, CA", birthday: "06/12", "ssn": "###-##-####"},
-//   "admin": {"age": 45, "location": "UK", birthday: "12/06", "ssn": "###-##-####"}
-// }
 let people = {
   "test": {"age": 0, "location": "Unknown", birthday: "1/1", "ssn": "REDACTED"},
-  "cooper": {"age": 21, "location": "Stanford, CA", birthday: "06/12", "ssn": "###-##-####"},
   "miles": {"age": 20, "location": "Stanford, CA", birthday: "1/31", "ssn": "###-##-####"},
   "matthew": {"age": 21, "location": "Stanford, CA", birthday: "11/12", "ssn": "###-##-####"},
+  "cooper": {"age": 21, "location": "Stanford, CA", birthday: "06/12", "ssn": "###-##-####"},
   "admin": {"age": 45, "location": "UK", birthday: "12/06", "ssn": "###-##-####"}
 }
 function idor(_name, response) {
@@ -55,7 +48,7 @@ app.get('/idor', (req,res) => {
     idor(_name, res) 
   }
   else {
-    res.json("Must include name query parameter")
+    res.json("Must include name query parameter. Try `/idor?name=test` or `/idor/test`")
   }
 })
 
@@ -69,7 +62,7 @@ app.get('/xss', (req,res) => {
     xss(_name, res) 
   }
   else {
-    res.send("Must include name query parameter")
+    res.send("Must include name query parameter. Try `/xss?name=test`")
   }
 })
 
@@ -100,20 +93,20 @@ app.get('/rce', (req,res) => {
     rce(file, res) 
   }
   else {
-    res.send("Must include file query parameter")
+    res.send("Must include file query parameter. Try `/rce?hello.txt`\n <!-- gotta find a better way to send file than exec(\"cat allowed/\" + file ... -->")
   }
 })
 
 // Auth Controls Endpoint
 app.get('/auth', (req,res) => {
-  let auth_cookie = auth_helper.getUserId(req,res);
-  if (!auth_cookie) res.redirect(301, '/login');
-  if (auth_cookie == "cooper" || auth_cookie == "admin")
-  res.send("You are " + auth_cookie);
+  let auth_cookie_id = auth_helper.getUserId(req,res);
+  if (!auth_cookie_id) res.redirect(301, '/login');
+  if (auth_cookie_id == "admin") res.send("Welcome admin!\n Here is the user data, please keep confidential\n" + people);
+  res.send("You are " + auth_cookie_id + ".\nSorry, you do not have admin access to this endpoint.");
 })
 
 app.get('/login', (req,res) => {
-  // TODO: if logged in, redirect
+  // if logged in, redirect
   try {
     if (auth_helper.getUserId(req,res)) res.redirect(301, '/auth')
   } catch {}
