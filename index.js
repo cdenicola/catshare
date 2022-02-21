@@ -24,13 +24,13 @@ app.get('/', (req,res) => {
 
 // IDOR ENDPOINT
 function idor(_name, response) {
-  // HOTFIX - prevent access to user `kooper` [dev note: whoops, ga]
-  if (_name.toUpperCase() == "KOOPER") response.send("user <b>kooper</b> cannot be accessed")
+  // HOTFIX - prevent access to user `kooper` [dev note [hint]: whoops, i hope that unicode collisions aren't relevant here https://docs.google.com/presentation/d/1vLj5OzmuQju3f54WNEOb1T4VA0MNjTSB/edit?usp=sharing&ouid=103056815585333361250&rtpof=true&sd=true ]
+  if (_name.toUpperCase() == "KOOPER") { response.send("user <b>kooper</b> cannot be accessed"); return; }
   // HOTFIX - prevent access to user `kooper`
 
-  _name = _name.toLowerCase()
-  if (secrets.people[_name]){
-    response.json(secrets.people[_name]) 
+  _name_lower = _name.toLowerCase()
+  if (secrets.people[_name_lower]){
+    response.json(secrets.people[_name_lower]) 
   }
   else {
     response.json("User Not Found")
