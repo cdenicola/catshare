@@ -3,6 +3,7 @@ const { exec } = require("child_process");
 var morgan = require('morgan')
 const express = require('express')
 
+
 const app = express()
 app.use(express.static('public'))
 // Logging
@@ -14,7 +15,7 @@ app.use(require('body-parser').urlencoded({ extended: false }));
 
 // my helpers
 const auth_helper = require('./helper/auth.js'); 
-const auth = require('./helper/auth.js');
+const secrets = require('./helper/secrets.js')
 
 // Front Page
 app.get('/', (req,res) => {
@@ -22,17 +23,14 @@ app.get('/', (req,res) => {
 })
 
 // IDOR ENDPOINT
-let people = {
-  "test": {"age": 0, "location": "Unknown", birthday: "1/1", "ssn": "REDACTED"},
-  "miles": {"age": 20, "location": "Stanford, CA", birthday: "1/31", "ssn": "###-##-####"},
-  "matthew": {"age": 21, "location": "Stanford, CA", birthday: "11/12", "ssn": "###-##-####"},
-  "cooper": {"age": 21, "location": "Stanford, CA", birthday: "06/12", "ssn": "###-##-####"},
-  "admin": {"age": 45, "location": "UK", birthday: "12/06", "ssn": "###-##-####"}
-}
 function idor(_name, response) {
+  // HOTFIX - prevent access to user `kooper` [dev note: whoops, ga]
+  if (_name.toUpperCase() == "KOOPER") response.send("user <b>kooper</b> cannot be accessed")
+  // HOTFIX - prevent access to user `kooper`
+
   _name = _name.toLowerCase()
-  if (people[_name]){
-    response.json(people[_name]) 
+  if (secrets.people[_name]){
+    response.json(secrets.people[_name]) 
   }
   else {
     response.json("User Not Found")
@@ -101,7 +99,7 @@ app.get('/rce', (req,res) => {
 app.get('/auth', (req,res) => {
   let auth_cookie_id = auth_helper.getUserId(req,res);
   if (!auth_cookie_id) res.redirect(301, '/login');
-  if (auth_cookie_id == "admin") res.send("Welcome admin!\n Here is the user data, please keep confidential\n" + people);
+  if (auth_cookie_id == "admin") res.send("Welcome admin!\n Here is the user data, please keep confidential\n" + secrets.people);
   res.send("You are " + auth_cookie_id + ".\nSorry, you do not have admin access to this endpoint.");
 })
 
