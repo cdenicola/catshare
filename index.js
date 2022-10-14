@@ -122,15 +122,15 @@ function rce(file, res) {
 // Auth Controls Endpoint
 app.get('/auth', (req,res) => {
   let auth_cookie_id = auth_helper.getUserId(req,res);
-  if (!auth_cookie_id) res.redirect(301, '/login');
+  if (!auth_cookie_id) res.redirect(303, '/login');
   if (auth_cookie_id == "admin") res.send("Welcome admin!\n Here is the user data, please keep confidential\n" + JSON.stringify(secrets.people));
-  res.send("You are " + auth_cookie_id + ".\nSorry, you do not have admin access to this endpoint.");
+  res.send("You are " + auth_cookie_id + ".\nSorry, you do not have admin access to this endpoint. <a href='/logout'>logout</a>");
 })
 
 app.get('/login', (req,res) => {
   // if logged in, redirect
   try {
-    if (auth_helper.getUserId(req,res)) res.redirect(301, '/auth')
+    if (auth_helper.getUserId(req,res)) res.redirect(303, '/auth')
   } catch {}
   res.sendFile('/public/login.html', { root: __dirname });
 })
@@ -141,17 +141,16 @@ app.post('/login', (req,res) => {
   if (username != '' && password != '') {
     // set cookie
     auth_helper.sendUserIdCookie(username, res);
-    res.redirect(301, '/auth')
+    res.redirect(303, '/auth')
   }
   else {
     res.sendFile('/public/login.html', { root: __dirname });
   }
 })
 
-
 app.get('/logout', (req, res) => {
   res.clearCookie('userId');
-  res.redirect(301, '/login');
+  res.redirect(303, '/login');
 })
 
 app.get('/secret', (req, res) => {
