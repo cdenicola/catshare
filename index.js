@@ -69,16 +69,16 @@ function get_user(req, res, _id){
 }
 
 // XSS Endpoint
-function xss(_name, response) {
-  response.send("Welcome to the website " + _name)
+function hello(_name, response) {
+  response.send("Hello " + _name + "! Here is your custom cat! <br/> <img src='https://cataas.com/cat/says/Hello%20" + _name.replace('/','') + "'>")
 }
-app.get('/xss', (req,res) => {
+app.get('/hello', (req,res) => {
   _name = req.query.name
   if (_name) {
-    xss(_name, res) 
+    hello(_name, res) 
   }
   else {
-    res.send("Must include name query parameter. Try `/xss?name=test`")
+    res.send("Include your name so we can say hello with a custom cat photo! Try `/hello?name=test`")
   }
 })
 
