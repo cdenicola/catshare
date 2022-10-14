@@ -38,8 +38,9 @@ function idor(_id, response) {
     // }
   if (secrets.people.length <= _id) {
     response.json("User Not Found")
+  } else {
+    response.json(secrets.people[_id]) 
   }
-  response.json(secrets.people[_id]) 
 }
 app.get('/user/:id', (req, res) => {
     _id = req.params.id
@@ -52,20 +53,25 @@ app.get('/user', (req,res) => {
 function get_user(req, res, _id){
   _admin = req.query.admin
   // make sure they supply a name
-  if (_id === undefined) {
-    res.json("Must include id query parameter. Try `/user?id=0` or `/user/0`")
+  if (_id === undefined || Number.isNaN(parseInt(_id))) {
+    res.json("Must include id query parameter, which must be a number. Try `/user?id=0` or `/user/0`")
+    return
   }
   // add admin=false if no admin parameter detectedm
-  if (_admin === undefined) {
+  else if (_admin === undefined) {
     let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
     admin_param = "admin=false" 
     res.redirect(fullUrl + (fullUrl.includes("?") ? "&" : "?") + admin_param)
   }
   // only admins can view this page
-  if (_admin.toLowerCase() != "true") {
+  else if (_admin.toLowerCase() != "true") {
     res.json("You are not an admin! HACKER DETECTED!")
   }
-  idor(_id, res) 
+
+  // otherwise, idor
+  else {
+    idor(_id, res) 
+  }
 }
 
 // XSS Endpoint
@@ -146,6 +152,10 @@ app.post('/login', (req,res) => {
 app.get('/logout', (req, res) => {
   res.clearCookie('userId');
   res.redirect(301, '/login');
+})
+
+app.get('/secret', (req, res) => {
+  res.sendFile('/public/secret.html', { root: __dirname })
 })
 
 // START SERVER
