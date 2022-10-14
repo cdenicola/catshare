@@ -39,21 +39,30 @@ function idor(_name, response) {
 }
 app.get('/idor/:name', (req, res) => {
     _name = req.params.name
-    idor(_name, res) 
+    get_idor(req, res, _name) 
 })
 app.get('/idor', (req,res) => {
   _name = req.query.name
+  get_idor(req, res, _name) 
+})
+function get_idor(req, res, _name){
   _admin = req.query.admin
-  if (!_admin) {
-    
-  }
-  if (_name) {
-    idor(_name, res) 
-  }
-  else {
+  // make sure they supply a name
+  if (_name === undefined) {
     res.json("Must include name query parameter. Try `/idor?name=test` or `/idor/test`")
   }
-})
+  // add admin=false if no admin parameter detected
+  if (_admin === undefined) {
+    let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    admin_param = "admin=false" 
+    res.redirect(fullUrl + (fullUrl.includes("?") ? "&" : "?") + admin_param)
+  }
+  // only admins can view this page
+  if (_admin.toLowerCase() != "true") {
+    res.json("You are not an admin! HACKER DETECTED!")
+  }
+  idor(_name, res) 
+}
 
 // XSS Endpoint
 function xss(_name, response) {
