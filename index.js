@@ -15,7 +15,8 @@ app.use(require('body-parser').urlencoded({ extended: false }));
 
 // my helpers
 const auth_helper = require('./helper/auth.js'); 
-const secrets = require('./helper/secrets.js')
+const secrets = require('./helper/secrets.js');
+const req = require('express/lib/request.js');
 
 // Front Page
 app.get('/', (req,res) => {
@@ -24,9 +25,9 @@ app.get('/', (req,res) => {
 
 // IDOR ENDPOINT
 function idor(_name, response) {
-  // HOTFIX - prevent access to user `kooper` [dev note [hint]: whoops, i hope that unicode collisions aren't relevant here https://docs.google.com/presentation/d/1vLj5OzmuQju3f54WNEOb1T4VA0MNjTSB/edit?usp=sharing&ouid=103056815585333361250&rtpof=true&sd=true ]
-  if (_name.toUpperCase() == "KOOPER") { response.send("user <b>kooper</b> cannot be accessed"); return; }
-  // HOTFIX - prevent access to user `kooper`
+  // HOTFIX - prevent access to user `kelechi` [dev note [hint]: whoops, i hope that unicode collisions aren't relevant here https://docs.google.com/presentation/d/1vLj5OzmuQju3f54WNEOb1T4VA0MNjTSB/edit?usp=sharing&ouid=103056815585333361250&rtpof=true&sd=true ]
+  if (_name.toUpperCase() == "kelechi") { response.send("user <b>kelechi</b> cannot be accessed"); return; }
+  // HOTFIX - prevent access to user `kelechi`
 
   _name_lower = _name.toLowerCase()
   if (secrets.people[_name_lower]){
@@ -42,6 +43,10 @@ app.get('/idor/:name', (req, res) => {
 })
 app.get('/idor', (req,res) => {
   _name = req.query.name
+  _admin = req.query.admin
+  if (!_admin) {
+    
+  }
   if (_name) {
     idor(_name, res) 
   }
@@ -81,25 +86,25 @@ function rce(file, res) {
     res.send(stdout)
   });
 }
-app.get('/rce/:file', (req, res) => {
-  file = req.params.file
-  rce(file, res) 
-})
-app.get('/rce', (req,res) => {
-  file = req.query.file
-  if (file) {
-    rce(file, res) 
-  }
-  else {
-    res.send("Must include file query parameter. Try `/rce?hello.txt`\n <!-- gotta find a better way to send file than exec(\"cat allowed/\" + file ... -->")
-  }
-})
+// app.get('/rce/:file', (req, res) => {
+//   file = req.params.file
+//   rce(file, res) 
+// })
+// app.get('/rce', (req,res) => {
+//   file = req.query.file
+//   if (file) {
+//     rce(file, res) 
+//   }
+//   else {
+//     res.send("Must include file query parameter. Try `/rce?hello.txt`\n <!-- gotta find a better way to send file than exec(\"cat allowed/\" + file ... -->")
+//   }
+// })
 
 // Auth Controls Endpoint
 app.get('/auth', (req,res) => {
   let auth_cookie_id = auth_helper.getUserId(req,res);
   if (!auth_cookie_id) res.redirect(301, '/login');
-  if (auth_cookie_id == "admin") res.send("Welcome admin!\n Here is the user data, please keep confidential\n" + secrets.people);
+  if (auth_cookie_id == "admin") res.send("Welcome admin!\n Here is the user data, please keep confidential\n" + JSON.stringify(secrets.people));
   res.send("You are " + auth_cookie_id + ".\nSorry, you do not have admin access to this endpoint.");
 })
 
@@ -114,7 +119,7 @@ app.get('/login', (req,res) => {
 app.post('/login', (req,res) => {
   let username = req.body['username'];
   let password = req.body['password'];
-  if (username == 'cooper' && password == 'cooper') {
+  if (username != '' && password != '') {
     // set cookie
     auth_helper.sendUserIdCookie(username, res);
     res.redirect(301, '/auth')
@@ -123,6 +128,15 @@ app.post('/login', (req,res) => {
     res.sendFile('/public/login.html', { root: __dirname });
   }
 })
+
+// // Share cat images
+// function share(req, resp) {
+
+// }
+// app.get('/login', (req, res) => {
+
+// })
+
 
 app.get('/logout', (req, res) => {
   res.clearCookie('userId');
