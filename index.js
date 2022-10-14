@@ -23,35 +23,39 @@ app.get('/', (req,res) => {
   res.sendFile('/public/index.html', { root: __dirname });
 })
 
-// IDOR ENDPOINT
-function idor(_name, response) {
+// IDOR ENDPOINT /user
+function idor(_id, response) {
   // HOTFIX - prevent access to user `kelechi` [dev note [hint]: whoops, i hope that unicode collisions aren't relevant here https://docs.google.com/presentation/d/1vLj5OzmuQju3f54WNEOb1T4VA0MNjTSB/edit?usp=sharing&ouid=103056815585333361250&rtpof=true&sd=true ]
-  if (_name.toUpperCase() == "kelechi") { response.send("user <b>kelechi</b> cannot be accessed"); return; }
+  // if (_name.toUpperCase() == "kelechi") { response.send("user <b>kelechi</b> cannot be accessed"); return; }
   // HOTFIX - prevent access to user `kelechi`
 
-  _name_lower = _name.toLowerCase()
-  if (secrets.people[_name_lower]){
-    response.json(secrets.people[_name_lower]) 
-  }
-  else {
+  // _name_lower = _name.toLowerCase()
+  // if (secrets.people[_name_lower]){
+    // response.json(secrets.people[_name_lower]) 
+  // }
+  // else {
+    // response.json("User Not Found")
+    // }
+  if (secrets.people.length <= _id) {
     response.json("User Not Found")
   }
+  response.json(secrets.people[_id]) 
 }
-app.get('/idor/:name', (req, res) => {
-    _name = req.params.name
-    get_idor(req, res, _name) 
+app.get('/user/:id', (req, res) => {
+    _id = req.params.id
+    get_user(req, res, _id) 
 })
-app.get('/idor', (req,res) => {
-  _name = req.query.name
-  get_idor(req, res, _name) 
+app.get('/user', (req,res) => {
+  _id = req.query.id
+  get_user(req, res, _id) 
 })
-function get_idor(req, res, _name){
+function get_user(req, res, _id){
   _admin = req.query.admin
   // make sure they supply a name
-  if (_name === undefined) {
-    res.json("Must include name query parameter. Try `/idor?name=test` or `/idor/test`")
+  if (_id === undefined) {
+    res.json("Must include id query parameter. Try `/user?id=0` or `/user/0`")
   }
-  // add admin=false if no admin parameter detected
+  // add admin=false if no admin parameter detectedm
   if (_admin === undefined) {
     let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
     admin_param = "admin=false" 
@@ -61,7 +65,7 @@ function get_idor(req, res, _name){
   if (_admin.toLowerCase() != "true") {
     res.json("You are not an admin! HACKER DETECTED!")
   }
-  idor(_name, res) 
+  idor(_id, res) 
 }
 
 // XSS Endpoint
@@ -137,14 +141,6 @@ app.post('/login', (req,res) => {
     res.sendFile('/public/login.html', { root: __dirname });
   }
 })
-
-// // Share cat images
-// function share(req, resp) {
-
-// }
-// app.get('/login', (req, res) => {
-
-// })
 
 
 app.get('/logout', (req, res) => {
