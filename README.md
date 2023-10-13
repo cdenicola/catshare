@@ -1,14 +1,14 @@
-# CS 106s Vulnerable Website
-
-## by Cooper de Nicola, Aditya Saligrama, and George Hosono
-
-#### https://github.com/saligrama/catshare
+# CatShare: A Cat-Themed Vulnerable Website
 
 This is a purposely insecure toy webserver for learning about security vulnerabilities. 
 
-This was originally designed for Stanford's [CS106S](https://cs106s.stanford.edu/). It has since been used a few times for workshops by [Stanford Applied Cyber][https://applied-cyber.stanford.edu]. Feel free to use for your own lessons or learning. 
+This was originally designed for Stanford's [CS106S](https://cs106s.stanford.edu/) and was authored by [Cooper de Nicola](https://github.com/cdenicola), [Aditya Saligrama](https://saligrama.io), and George Hosono. It has since been used a few times for workshops by [Stanford Applied Cyber](https://applied-cyber.stanford.edu). Feel free to use for your own lessons or learning. 
 
 ## Features
+
+* IDOR (in `/user` endpoint)
+* XSS (in `/hello` endpoint)
+* Insecure session handling (in `/login` endpoint)
 
 ## Installation
 
