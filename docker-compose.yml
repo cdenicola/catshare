@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    working_dir: /usr/src/app
+    volumes:
+      - /etc/catshare/secrets.js:/usr/src/app/secrets.js
+    networks:
+      - landing
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - 80:8000
+      - 443:8443
+    volumes:
+      - ./:/var/www
+      - ./data/nginx:/etc/nginx/conf.d/
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    networks:
+      - landing
+  
+  # certbot:
+  #   image: certbot/certbot
+  #   networks:
+  #     - landing
+
+networks:
+  landing:
+    driver: bridge
