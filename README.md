@@ -1,29 +1,39 @@
-# CS 106s Vulnerable Website
-## by Cooper de Nicola 
-#### https://github.com/cdenicola/CS106S-VulnerabilityExample
+# CatShare: A Cat-Themed Vulnerable Website
 
 This is a purposely insecure toy webserver for learning about security vulnerabilities. 
 
-This was originally designed for Stanford's [CS106S](https://cs106s.stanford.edu/). Feel free to use for your own lessons or learning. 
+This was originally designed for Stanford's [CS106S](https://cs106s.stanford.edu/) and was authored by [Cooper de Nicola](https://github.com/cdenicola), [Aditya Saligrama](https://saligrama.io), and George Hosono. It has since been used a few times for workshops by [Stanford Applied Cyber](https://applied-cyber.stanford.edu). Feel free to use for your own lessons or learning. 
 
 ## Features
 
+* IDOR (in `/user` endpoint)
+* XSS (in `/hello` endpoint)
+* Insecure session handling (in `/login` endpoint)
 
 ## Installation
+
 ### Running the webserver on your machine (testing only)
+
+First cd into the `app` directory.
+
 Make sure dependencies are installed using the command `npm install`.
 
-Start the server using command `node index.js`. Access the server on `localhost:80`. 
+Start the server using command `node index.js`. Access the server on `localhost:3000`. 
 
-Note: this is dangerous. The server exposes an RCE vulnerability by default. If you run it on your local machine, anyone can have. 
+### Running the webserver using docker-compose
 
-### Running the webserver in docker
-First build a docker image of the server. Use the command
-`docker build . -t <your username>/cs106s-vulnerable-website`
+Initialize the TLS certificates from Let's Encrypt using [this script](https://github.com/wmnnd/nginx-certbot/blob/master/init-letsencrypt.sh) edited to add your email and domain. Note you may need to edit the line that says
 
-Then run the server's image in a container
-`docker run -p <port>:80 -d <your username>/cs106s-vulnerable-website`
+```bash
+docker-compose up --force-recreate -d nginx
+```
 
-This will start the website on `localhost:<port>`. If your host is acessible via the internet, you can access this website on `<your ip address>:<port>`. 
+to
 
-Happy Hacking!
+```
+docker-compose up --force-recreate -d nginx app
+```
+
+Then simply run `docker-compose up`. Note you'll need to replace usage of `catshare.saligrama.io` with your domain.
+
+There is a [systemd service](./docker-compose.service) that can start the app at system start.
