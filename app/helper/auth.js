@@ -18,12 +18,12 @@ const getAppCookies = (req) => {
         const rawCookies = req.headers.cookie.split('; ');
         // rawCookies = ['myapp=secretcookie, 'analytics_cookie=beacon;']
 
-        const parsedCookies = {};
-        rawCookies.forEach(rawCookie=>{
+        const parsedCookies = rawCookies.reduce((acc, rawCookie) => {
             const parsedCookie = rawCookie.split('=');
             // parsedCookie = ['myapp', 'secretcookie'], ['analytics_cookie', 'beacon']
-            parsedCookies[parsedCookie[0]] = parsedCookie[1];
-        });
+            acc[parsedCookie[0]] = parsedCookie[1];
+            return acc;
+        }, {});
         return parsedCookies;
     }
     catch {

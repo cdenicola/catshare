@@ -94,7 +94,10 @@ app.get('/auth', (req,res) => {
     if (!auth_cookie_id) {
         res.redirect(303, '/login');
     }
-    if (auth_cookie_id == "admin") res.send("Welcome admin!\n Here is the user data, please keep confidential\n" + JSON.stringify(secrets.people));
+    if (auth_cookie_id == "admin") {
+        res.send("Welcome admin!\n Here is the user data, please keep confidential\n" + JSON.stringify(secrets.people));
+        return;
+    }
     res.send("You are " + auth_cookie_id + ".\nSorry, you do not have admin access to this endpoint. <a href='/logout'>logout</a>");
 })
 
